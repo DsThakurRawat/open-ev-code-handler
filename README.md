@@ -7,6 +7,15 @@ AI Senior Code Reviewer evaluation environment.
 2. **Security Audit**: Detect vulnerabilities (OWASP Top 10).
 3. **Architectural Review**: Evaluate design patterns and system constraints.
 
+## Project Structure
+
+- `codereview_env/`: Core logic and state machine.
+- `codereview_env/graders/`: Specialized grading modules (Bug, Security, Arch).
+- `scripts/`: Operational scripts (baseline evaluation, validation).
+- `tests/`: Comprehensive test suite.
+- `app.py`: FastAPI entry point.
+- `openenv.yaml`: OpenEnv specification.
+
 ## Installation
 
 ```bash
@@ -53,4 +62,3 @@ The environment is currently **Production Ready** and follows the standard OpenE
 - [x] Deterministic specialized graders
 - [x] Thin FastAPI gateway with WebSocket event streaming
 - [x] Comprehensive test coverage
-# open-ev-code-handler
