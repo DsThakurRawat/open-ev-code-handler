@@ -1,0 +1,27 @@
+version: "1.0"
+name: "agentorg-codereview"
+description: "AI Senior Code Reviewer evaluation environment for AgentOrg."
+entry_point: "app:app"
+
+tasks:
+  - id: "bug_detection"
+    max_steps: 10
+    scenarios: 10
+  - id: "security_audit"
+    max_steps: 15
+    scenarios: 10
+  - id: "architectural_review"
+    max_steps: 20
+    scenarios: 10
+
+grading:
+  type: "deterministic"
+  metrics:
+    - name: "coverage"
+      weight: 0.4
+    - name: "precision"
+      weight: 0.6
+    - name: "severity_accuracy"
+      weight: 0.7
+    - name: "keyword_accuracy"
+      weight: 0.3
