@@ -87,11 +87,13 @@ def get_leaderboard():
 @app.post("/submit")
 def submit_to_leaderboard(submission: SubmitScore):
     entries = leaderboard.get(submission.task_id, [])
-    entries.append(submission.model_dump())
-    # Sort and keep top 5
+    new_entry = submission.model_dump()
+    entries.append(new_entry)
     entries.sort(key=lambda x: x["score"], reverse=True)
+    rank = entries.index(new_entry) + 1   # capture rank before slicing
     leaderboard[submission.task_id] = entries[:5]
-    return {"status": "submitted", "rank": entries.index(submission.model_dump()) + 1 if submission.model_dump() in entries else None}
+    in_top5 = rank <= 5
+    return {"status": "submitted", "rank": rank if in_top5 else None}
 
 @app.websocket("/ws/events")
 async def websocket_endpoint(websocket: WebSocket):
@@ -100,10 +102,10 @@ async def websocket_endpoint(websocket: WebSocket):
     try:
         while True:
             await websocket.receive_text()
-    except Exception:
+    except WebSocketDisconnect:
         pass
     finally:
-        clients.remove(websocket)
+        clients.discard(websocket)
 
 if __name__ == "__main__":
     import uvicorn

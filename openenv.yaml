@@ -16,12 +16,9 @@ tasks:
 
 grading:
   type: "deterministic"
-  metrics:
-    - name: "coverage"
-      weight: 0.4
-    - name: "precision"
-      weight: 0.6
-    - name: "severity_accuracy"
-      weight: 0.7
-    - name: "keyword_accuracy"
-      weight: 0.3
+  issue_matching:
+    coverage_weight: 0.4
+    precision_weight: 0.6
+  quality_scoring:
+    severity_weight: 0.7
+    keyword_weight: 0.3

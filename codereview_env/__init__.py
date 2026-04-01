@@ -1,1 +1,1 @@
-# AgentOrg CodeReview Environment Package
+"""AgentOrg CodeReview Environment package."""

@@ -1,7 +1,7 @@
 import requests
 from codereview_env.models import TaskId, ActionType, Category, Severity, Verdict
 
-API_URL = "http://localhost:8000"
+API_URL = "http://localhost:7860"
 
 def run_baseline(task_id: TaskId, seed: int = 42):
     # 1. Reset
@@ -67,8 +67,23 @@ def run_baseline(task_id: TaskId, seed: int = 42):
     print(f"Final Score: {result_resp.json()['final_score']}")
 
 if __name__ == "__main__":
-    # Note: Requires app.py to be running
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Run the baseline agent against the CodeReview API.")
+    parser.add_argument("--url", default="http://localhost:7860", help="Base URL of the running API (default: http://localhost:7860)")
+    parser.add_argument("--task", default="bug_detection", help="Task ID to run (default: bug_detection)")
+    parser.add_argument("--seed", type=int, default=0, help="Random seed (default: 0)")
+    args = parser.parse_args()
+
+    # Override module-level API_URL with CLI argument
+    API_URL = args.url
+
+    # Map string task id to TaskId enum
+    task_map = {t.value: t for t in TaskId}
+    if args.task not in task_map:
+        parser.error(f"Unknown task '{args.task}'. Choose from: {list(task_map.keys())}")
+
     try:
-        run_baseline(TaskId.BUG_DETECTION, seed=0)
+        run_baseline(task_map[args.task], seed=args.seed)
     except Exception as e:
         print(f"Baseline failed (is the API running?): {e}")
