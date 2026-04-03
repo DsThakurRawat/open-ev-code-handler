@@ -165,9 +165,9 @@ def sanitize_action(action_dict: dict, task_id: str) -> dict:
 
     elif action_type in ("approve", "request_changes"):
         if action_type == "approve":
-            action_dict["verdict"] = "LGTM"
+            action_dict["verdict"] = "lgtm"
         else:
-            action_dict["verdict"] = "REQUEST_CHANGES"
+            action_dict["verdict"] = "request_changes"
         if "body" not in action_dict:
             action_dict["body"] = "Review complete."
 

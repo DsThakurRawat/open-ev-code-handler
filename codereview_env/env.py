@@ -1,8 +1,9 @@
+from datetime import datetime, timezone
 from codereview_env.models import (
     TaskId, Action, Observation, StepResult, ResetResult,
-    ActionType, ActionRecord, EpisodeResult, StateResult
+    ActionType, ActionRecord, EpisodeResult, FileChanged
 )
-from codereview_env.scenario_bank import get_scenario
+from codereview_env.scenarios import get_scenario
 from codereview_env.graders.grader_utils import find_best_match
 from codereview_env.graders.bug_grader import grade_bug_detection
 from codereview_env.graders.security_grader import grade_security_audit
@@ -48,21 +49,27 @@ class CodeReviewEnv:
         s = self._state
         s["step_count"] += 1
 
-        # Record action in history
-        s["history"].append(ActionRecord(
+        # Record action in history (reward will be updated after calculation)
+        record = ActionRecord(
             action_type=action.action_type,
             body=action.body,
             filename=action.filename,
             line_number=action.line_number,
             severity=action.severity,
             category=action.category,
-            verdict=action.verdict
-        ))
+            verdict=action.verdict,
+            reward=0.0,
+            timestamp=datetime.now(timezone.utc).isoformat()
+        )
+        s["history"].append(record)
 
         # Apply action logic and compute incremental reward delta
         prev_score    = s["running_score"]
         reward_delta  = self._apply_action(action)
         s["running_score"] = prev_score + reward_delta
+
+        # Update the history record with the actual reward
+        record.reward = round(reward_delta, 4)
 
         # Check termination
         s["done"] = (
@@ -83,53 +90,27 @@ class CodeReviewEnv:
             }
         )
 
-    def get_state(self, episode_id: str) -> StateResult:
-        """Return a snapshot of current episode state (required by /state endpoint)."""
-        if self._state is None:
-            raise RuntimeError("Episode not initialized. Call reset() first.")
-        s  = self._state
-        sc = s["scenario"]
-        return StateResult(
-            episode_id=episode_id,
-            task_id=s["task_id"],
-            step=s["step_count"],
-            max_steps=s["max_steps"],
-            scenario_hash=sc.hash,
-            cumulative_score=round(s["running_score"], 4),
-            noise_budget=s["noise_budget"],
-            issues_found=list(s["issues_found"]),
-            done=s["done"],
-        )
-
     def _build_obs(self) -> Observation:
         s  = self._state
         sc = s["scenario"]
         return Observation(
             task_id=s["task_id"],
+            scenario_hash=sc.hash,
             pr_title=sc.pr_title,
             pr_description=sc.pr_description,
             diff="\n".join([f.patch for f in sc.files_changed]),
             files_changed=sc.files_changed,
             step_count=s["step_count"],
             max_steps=s["max_steps"],
-            history=s["history"],
             noise_budget=s["noise_budget"],
-            # Blast radius / service context from scenario metadata
-            affected_users=sc.affected_users,
-            service_criticality=sc.service_criticality,
-            blast_radius=sc.blast_radius,
-            service_name=sc.service_name,
+            max_noise_budget=5,
+            issues_flagged=len(s["issues_found"]),
+            done=s["done"]
         )
 
     def _apply_action(self, action: Action) -> float:
         """
         Compute the incremental reward delta for this single action.
-
-        Reward shaping:
-          - FLAG_ISSUE that matches ground truth: delta = new_score - old_score (always >= 0)
-          - FLAG_ISSUE that is a false positive:  delta = -0.05 per FP (noise penalty)
-          - Terminal action (approve/request_changes): grader recalculates full score
-          - Any other action: delta = 0
         """
         s  = self._state
         sc = s["scenario"]
@@ -174,21 +155,24 @@ class CodeReviewEnv:
         missed_ids = list(all_gt_ids - s["issues_found"])
         final_score = self._grade(sc, s)
 
-        verdict_correct = None
-        if s["task_id"] == TaskId.ARCHITECTURAL_REVIEW:
-            final_action = s["history"][-1] if s["history"] else None
-            if final_action and final_action.action_type in (ActionType.APPROVE, ActionType.REQUEST_CHANGES):
-                required_verdicts = [gt.required_verdict for gt in sc.ground_truth_issues if gt.required_verdict]
-                if required_verdicts:
-                    verdict_correct = final_action.verdict == required_verdicts[0]
+        terminated_reason = ""
+        if s["done"]:
+            if s["noise_budget"] <= 0:
+                terminated_reason = "noise_exhausted"
+            elif s["history"] and s["history"][-1].action_type in (ActionType.APPROVE, ActionType.REQUEST_CHANGES):
+                terminated_reason = "terminal_action"
+            else:
+                terminated_reason = "max_steps"
 
         return EpisodeResult(
             task_id=s["task_id"],
+            scenario_hash=sc.hash,
             seed=s["seed"],
-            total_steps=s["step_count"],
             final_score=round(final_score, 4),
-            issues_found=list(s["issues_found"]),
-            issues_missed=missed_ids,
-            false_positives=s["false_positives"],
-            verdict_correct=verdict_correct
+            steps_taken=s["step_count"],
+            issues_found=len(s["issues_found"]),
+            issues_total=len(sc.ground_truth_issues),
+            noise_penalties=5 - s["noise_budget"],
+            history=s["history"],
+            terminated_reason=terminated_reason
         )

@@ -5,7 +5,7 @@ from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 
 from codereview_env.models import (
-    TaskId, Action, ResetResult, StepResult, EpisodeResult, StateResult
+    TaskId, Action, ResetResult, StepResult, EpisodeResult
 )
 from codereview_env.env import CodeReviewEnv
 
@@ -96,21 +96,6 @@ async def step_env(episode_id: str, action: Action):
         result = env.step(action)
         await broadcast_event({"episode_id": episode_id, "type": "step", "reward": result.reward})
         return result
-    except RuntimeError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-
-@app.get("/state/{episode_id}", response_model=StateResult)
-def get_state(episode_id: str):
-    """
-    Return current episode state snapshot.
-    Required by the OpenEnv spec alongside /reset and /step.
-    """
-    if episode_id not in episodes:
-        raise HTTPException(status_code=404, detail="Episode not found")
-    env = episodes[episode_id]
-    try:
-        return env.get_state(episode_id)
     except RuntimeError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
