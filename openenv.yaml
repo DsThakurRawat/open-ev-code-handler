@@ -45,22 +45,10 @@ tasks:
 
 grading:
   type: "deterministic"
-  score_range: [0.0, 1.0]
-  partial_credit: true
-  metrics:
-    - name: "recall"
-      description: "Fraction of ground-truth issues correctly identified"
-      weight: 0.7
-    - name: "precision"
-      description: "Fraction of flagged issues that are true positives"
-      weight: 0.3
-    - name: "severity_accuracy"
-      description: "How close the flagged severity is to ground truth (security task)"
-      weight: 0.7
-    - name: "keyword_accuracy"
-      description: "Semantic overlap between agent description and issue keywords"
-      weight: 0.3
-    - name: "verdict_correctness"
-      description: "Whether final approve/request_changes decision is correct (arch task)"
-      weight: 0.2
+  issue_matching:
+    coverage_weight: 0.4
+    precision_weight: 0.6
+  quality_scoring:
+    severity_weight: 0.7
+    keyword_weight: 0.3
 
