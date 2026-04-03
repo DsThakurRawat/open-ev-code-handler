@@ -1,37 +1,56 @@
 from typing import List
-from codereview_env.models import Scenario, ActionRecord, Category, Severity
-from codereview_env.graders.grader_utils import find_best_match, keyword_overlap
-
-def severity_to_int(sev: Severity) -> int:
-    mapping = {
-        Severity.LOW: 1,
-        Severity.MEDIUM: 2,
-        Severity.HIGH: 3,
-        Severity.CRITICAL: 4
-    }
-    return mapping.get(sev, 0)
+from codereview_env.models import Scenario, ActionRecord, Category, Severity, ActionType
 
 def grade_security_audit(scenario: Scenario, history: List[ActionRecord]) -> float:
-    """Grade security audit: 0.7 * correct_severity + 0.3 * keyword_accuracy."""
-    flagged_actions = [r for r in history if r.category == Category.SECURITY]
-    if not scenario.ground_truth_issues:
-        return 1.0 if not flagged_actions else 0.0
+    if not history:
+        return 0.0
         
-    total_score = 0.0
-    already_matched = set()
+    flag_actions = [a for a in history if a.action_type == ActionType.FLAG_ISSUE]
+    if not flag_actions:
+        return 0.0
+        
+    matched_issue_scores = []
+    used_action_indices = set()
     
-    for action in flagged_actions:
-        match = find_best_match(action, scenario.ground_truth_issues, already_matched)
-        if match:
-            # Correct Severity: 1.0 if match, else penalty per level
-            sev_diff = abs(severity_to_int(action.severity) - severity_to_int(match.severity))
-            sev_score = max(0.0, 1.0 - (sev_diff * 0.3))
+    for truth in scenario.ground_truth_issues:
+        if truth.category != Category.SECURITY:
+            continue
             
-            # Keyword Accuracy
-            kw_score = keyword_overlap(action.body, match.keywords)
+        best_match_idx = -1
+        for j, action in enumerate(flag_actions):
+            if j in used_action_indices:
+                continue
+                
+            # Match criteria: filename, line +- 3, category SECURITY, >= 1 keyword
+            if (action.filename == truth.filename and
+                action.line_number is not None and
+                abs(action.line_number - truth.line_number) <= 3 and
+                action.category == Category.SECURITY):
+                
+                body_lower = (action.body or "").lower()
+                if any(kw.lower() in body_lower for kw in truth.keywords):
+                    best_match_idx = j
+                    break
+        
+        if best_match_idx != -1:
+            action = flag_actions[best_match_idx]
+            used_action_indices.add(best_match_idx)
             
-            total_score += 0.7 * sev_score + 0.3 * kw_score
-            already_matched.add(match.id)
+            # Calculate issue score
+            sev_diff = abs(Severity.ordinal(truth.severity) - Severity.ordinal(action.severity))
+            sev_score = max(0.0, 1.0 - sev_diff * 0.3)
             
-    # Normalize by number of GT issues
-    return round(min(1.0, total_score / len(scenario.ground_truth_issues)), 4) if scenario.ground_truth_issues else 1.0
+            body_lower = (action.body or "").lower()
+            match_count = sum(1 for kw in truth.keywords if kw.lower() in body_lower)
+            kw_threshold = max(4, len(truth.keywords))
+            kw_score = match_count / kw_threshold
+            
+            issue_score = 0.7 * sev_score + 0.3 * kw_score
+            matched_issue_scores.append(issue_score)
+            
+    if not matched_issue_scores:
+        return 0.0
+        
+    final_score = sum(matched_issue_scores) / len(matched_issue_scores)
+    return float(round(max(0.0, min(1.0, final_score)), 4))
+

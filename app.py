@@ -119,8 +119,8 @@ def submit_to_leaderboard(submission: SubmitScore):
     entries.append(new_entry)
     entries.sort(key=lambda x: x["score"], reverse=True)
     rank = entries.index(new_entry) + 1   # capture rank before slicing
-    leaderboard[submission.task_id] = entries[:10]
-    return {"status": "submitted", "rank": rank if rank <= 10 else None}
+    leaderboard[submission.task_id] = entries[:5]
+    return {"status": "submitted", "rank": rank if rank <= 5 else None}
 
 
 @app.websocket("/ws/events")
