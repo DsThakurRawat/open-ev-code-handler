@@ -50,8 +50,10 @@ def test_api_leaderboard():
     # Check leaderboard
     lb_resp = client.get("/leaderboard")
     assert lb_resp.status_code == 200
-    assert len(lb_resp.json()["bug_detection"]) > 0
-    assert lb_resp.json()["bug_detection"][0]["agent_name"] == "test_agent"
+    lb_data = lb_resp.json()
+    bug_entries = lb_data["bug_detection"]["entries"]
+    assert len(bug_entries) > 0
+    assert bug_entries[0]["agent_name"] == "test_agent"
 
 def test_api_invalid_episode():
     client = TestClient(app)

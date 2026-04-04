@@ -11,3 +11,8 @@ dist/
 build/
 .idea/
 .vscode/
+
+# Persistence
+data/*.db
+data/*.db-shm
+data/*.db-wal
