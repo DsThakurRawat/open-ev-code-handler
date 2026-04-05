@@ -4,9 +4,9 @@ from sqlmodel import SQLModel, Session, create_engine
 from sqlmodel.pool import StaticPool
 
 from app import app
-from codereview_env.database import get_session
-from codereview_env.env import CodeReviewEnv
-from codereview_env.models import TaskId, Action, ActionType, Severity, Category, Verdict
+from codelens_env.database import get_session
+from codelens_env.env import CodeLensEnv
+from codelens_env.models import TaskId, Action, ActionType, Severity, Category, Verdict
 
 @pytest.fixture(name="session")
 def session_fixture():
@@ -32,7 +32,7 @@ def client_fixture(session):
 
 @pytest.fixture
 def env():
-    return CodeReviewEnv()
+    return CodeLensEnv()
 
 @pytest.fixture
 def approve_action():

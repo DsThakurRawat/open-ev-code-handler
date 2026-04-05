@@ -1,7 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from app import app
-from codereview_env.models import TaskId, ActionType, Category, Severity, Verdict
+from codelens_env.models import TaskId, ActionType, Category, Severity, Verdict
 
 def test_api_health():
     client = TestClient(app)

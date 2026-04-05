@@ -1,6 +1,6 @@
 import pytest
-from codereview_env.env import CodeReviewEnv
-from codereview_env.models import (
+from codelens_env.env import CodeLensEnv
+from codelens_env.models import (
     TaskId, Action, ActionType, Category, Severity, Verdict
 )
 
@@ -10,7 +10,7 @@ from codereview_env.models import (
 # ─────────────────────────────────────────────────────────────────────────────
 
 def test_env_reset():
-    env = CodeReviewEnv()
+    env = CodeLensEnv()
     res = env.reset(TaskId.BUG_DETECTION, seed=0)
     assert res.task_id == TaskId.BUG_DETECTION
     assert res.seed == 0
@@ -20,7 +20,7 @@ def test_env_reset():
 
 def test_env_reset_populates_blast_radius():
     """Observation should carry blast-radius metadata from the scenario."""
-    env = CodeReviewEnv()
+    env = CodeLensEnv()
     res = env.reset(TaskId.SECURITY_AUDIT, seed=0)
     obs = res.observation
     # Note: New models have different fields or names, but the env should map them.
@@ -32,7 +32,7 @@ def test_env_reset_populates_blast_radius():
 # ─────────────────────────────────────────────────────────────────────────────
 
 def test_env_step_bug_detection():
-    env = CodeReviewEnv()
+    env = CodeLensEnv()
     env.reset(TaskId.BUG_DETECTION, seed=1)
     # seed=1 → bug_003: None dereference in auth.py (per reordering)
 
@@ -63,7 +63,7 @@ def test_env_step_bug_detection():
 
 def test_env_step_reward_is_incremental_not_cumulative():
     """Each step reward should be a delta (positive or zero or penalty), not a running total."""
-    env = CodeReviewEnv()
+    env = CodeLensEnv()
     # seed=1 selects bug_003: None dereference in auth.py at line 16
     env.reset(TaskId.BUG_DETECTION, seed=1)
 
@@ -87,7 +87,7 @@ def test_env_step_reward_is_incremental_not_cumulative():
 
 def test_env_step_false_positive_penalty():
     """False positives should decrement noise_budget and return negative reward."""
-    env = CodeReviewEnv()
+    env = CodeLensEnv()
     env.reset(TaskId.BUG_DETECTION, seed=0)
 
     fp_action = Action(
@@ -104,7 +104,7 @@ def test_env_step_false_positive_penalty():
 
 
 def test_env_noise_budget_exhaustion():
-    env = CodeReviewEnv()
+    env = CodeLensEnv()
     env.reset(TaskId.BUG_DETECTION, seed=0)
 
     fp_action = Action(
@@ -127,7 +127,7 @@ def test_env_noise_budget_exhaustion():
 
 
 def test_env_max_steps():
-    env = CodeReviewEnv()
+    env = CodeLensEnv()
     env.reset(TaskId.BUG_DETECTION, seed=0)
 
     action = Action(action_type=ActionType.ASK_QUESTION, body="what's this?")
@@ -145,7 +145,7 @@ def test_env_max_steps():
 # ─────────────────────────────────────────────────────────────────────────────
 
 def test_security_task_runs_to_completion():
-    env = CodeReviewEnv()
+    env = CodeLensEnv()
     # seed=1 selects sec_002: Hardcoded secret (if 0-indexed and order is preserved)
     # Actually get_scenario(TaskId.SECURITY_AUDIT, 1) selects the second item.
     env.reset(TaskId.SECURITY_AUDIT, seed=1)
@@ -172,7 +172,7 @@ def test_security_task_runs_to_completion():
 
 
 def test_arch_task_runs_to_completion():
-    env = CodeReviewEnv()
+    env = CodeLensEnv()
     env.reset(TaskId.ARCHITECTURAL_REVIEW, seed=0)
 
     # arch_001 is UserManager god class
@@ -220,7 +220,7 @@ def test_env_step_raises_when_done(env, approve_action):
 def test_env_history_recorded(env):
     """All steps should appear in final result history."""
     env.reset(TaskId.BUG_DETECTION, seed=0)
-    from codereview_env.models import Action, ActionType
+    from codelens_env.models import Action, ActionType
     for _ in range(3):
         env.step(Action(action_type=ActionType.ASK_QUESTION, body="question"))
     env.step(Action(action_type=ActionType.APPROVE, body="LGTM", verdict=Verdict.LGTM))
@@ -242,7 +242,7 @@ def test_env_get_final_result_score_clamped(env, approve_action):
 def test_env_full_episode_completes(task_id, seed, env):
     """Full episodes must always reach a terminal state."""
     env.reset(task_id, seed=seed)
-    from codereview_env.models import Action, ActionType, Verdict
+    from codelens_env.models import Action, ActionType, Verdict
     # Just skip to terminal
     action = Action(action_type=ActionType.APPROVE, body="LGTM", verdict=Verdict.LGTM)
     result = env.step(action)

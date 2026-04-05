@@ -1,0 +1,54 @@
+version: "1.0"
+name: "codelens-codelens"
+description: >
+  AI Senior Code Reviewer evaluation environment — trains agents to detect bugs,
+  security vulnerabilities, and architectural issues in realistic Python PRs.
+  Grounded in real-world incident patterns (payment systems, auth layers, microservices).
+entry_point: "app:app"
+base_url: "http://localhost:7860"
+api_version: "v1"
+
+tags:
+  - codelens
+  - code-review
+  - security
+  - software-engineering
+
+tasks:
+  - id: "bug_detection"
+    difficulty: easy
+    max_steps: 10
+    scenarios: 10
+    description: >
+      Identify logical errors, off-by-one bugs, mutable default arguments,
+      None dereferences, race conditions, and type mismatches in Python snippets.
+      Agents must FLAG issues with correct category/severity and submit a final verdict.
+
+  - id: "security_audit"
+    difficulty: medium
+    max_steps: 15
+    scenarios: 10
+    description: >
+      Detect OWASP Top-10 vulnerabilities: SQL injection, XSS, hardcoded secrets,
+      JWT bypass, insecure deserialization (pickle RCE), path traversal, timing attacks,
+      CORS misconfiguration, and missing rate limits in a payment-adjacent Python codebase.
+
+  - id: "architectural_review"
+    difficulty: hard
+    max_steps: 20
+    scenarios: 10
+    description: >
+      Evaluate system design quality: SRP violations, direct DB access bypassing API layers,
+      synchronous blocking calls in event loops, missing idempotency keys on payment mutations,
+      N+1 query patterns, god object anti-patterns, and shared mutable state between microservices.
+      Requires reasoning about blast radius and service criticality in addition to code issues.
+
+grading:
+  type: "deterministic"
+  issue_matching:
+    coverage_weight: 0.4
+    precision_weight: 0.6
+  quality_scoring:
+    severity_weight: 0.7
+    keyword_weight: 0.3
+

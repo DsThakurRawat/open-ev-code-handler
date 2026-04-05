@@ -1,6 +1,6 @@
 import pytest
-from codereview_env.scenarios import get_scenario, all_scenarios
-from codereview_env.models import TaskId, Severity
+from codelens_env.scenarios import get_scenario, all_scenarios
+from codelens_env.models import TaskId, Severity
 
 # ── All 30 scenarios loadable ──────────────────────────────────────────────
 

@@ -1,7 +1,7 @@
-from codereview_env.models import Scenario, ActionRecord, Category, Severity, TaskId, GroundTruthIssue, ActionType, Verdict
-from codereview_env.graders.bug_grader import grade_bug_detection
-from codereview_env.graders.security_grader import grade_security_audit
-from codereview_env.graders.arch_grader import grade_architectural_review
+from codelens_env.models import Scenario, ActionRecord, Category, Severity, TaskId, GroundTruthIssue, ActionType, Verdict
+from codelens_env.graders.bug_grader import grade_bug_detection
+from codelens_env.graders.security_grader import grade_security_audit
+from codelens_env.graders.arch_grader import grade_architectural_review
 
 def test_bug_grader_perfect():
     scenario = Scenario(
@@ -49,9 +49,9 @@ def test_security_grader_severity_mismatch():
     ]
     score = grade_security_audit(scenario, history)
     # sev_diff = 3, sev_score = max(0, 1 - 3*0.3) = 0.1
-    # threshold = max(4, 1*0.6) = 4. kw_score = 1/4 = 0.25
-    # total_score = 0.7 * 0.1 + 0.3 * 0.25 = 0.07 + 0.075 = 0.145
-    assert score == 0.145
+    # kw_score = 1/1 = 1.0
+    # total_score = 0.7 * 0.1 + 0.3 * 1.0 = 0.07 + 0.3 = 0.37
+    assert score == 0.37
 
 def test_arch_grader_verdict():
     scenario = Scenario(

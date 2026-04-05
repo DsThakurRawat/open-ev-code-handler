@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Initialize or reset the CodeReview database."""
+"""Initialize or reset the CodeLens database."""
 import sys
 import os
-# Ensure PYTHONPATH is set so we can import codereview_env
+# Ensure PYTHONPATH is set so we can import codelens_env
 sys.path.append(os.getcwd())
 
-from codereview_env.database import create_db_and_tables, get_engine
-from codereview_env.config import get_settings
+from codelens_env.database import create_db_and_tables, get_engine
+from codelens_env.config import get_settings
 from sqlmodel import SQLModel
 
 def init():
