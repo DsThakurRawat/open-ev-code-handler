@@ -4,7 +4,7 @@ Follow this guide to deploy **CodeLens. v1.0.0** to the professional cloud. This
 
 ---
 
-## 1. 🗄️ Setup the Database (PostgreSQL)
+## 1.  Setup the Database (PostgreSQL)
 
 Since SQLite is disk-based and will be deleted at every restart on Render/Vercel, you **must** use a managed PostgreSQL service.
 
@@ -15,7 +15,7 @@ Since SQLite is disk-based and will be deleted at every restart on Render/Vercel
 
 ---
 
-## 2. 🚀 Setup the Backend (Render)
+## 2.  Setup the Backend (Render)
 
 Render will host your FastAPI API and your Dockerized environment.
 
@@ -33,7 +33,7 @@ Render will host your FastAPI API and your Dockerized environment.
 
 ---
 
-## 3. 🎨 Setup the Frontend (Vercel)
+## 3.  Setup the Frontend (Vercel)
 
 Vercel will host your React/Vite dashboard.
 
@@ -46,7 +46,7 @@ Vercel will host your React/Vite dashboard.
 
 ---
 
-## 4. 🤖 Running Remote Evaluations
+## 4.  Running Remote Evaluations
 
 Once deployed, you can run the benchmark script from your local machine (or any CI) against your **production** instance:
 

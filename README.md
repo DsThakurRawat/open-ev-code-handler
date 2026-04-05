@@ -17,7 +17,7 @@ Designed for researchers and developers building the next generation of AI code 
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 Get up and running locally in under 2 minutes:
 
@@ -36,7 +36,7 @@ PYTHONPATH=. python app.py
 
 ---
 
-## 📋 Evaluation Tasks
+##  Evaluation Tasks
 
 CodeLens benchmarks agents across three critical engineering domains:
 
@@ -48,7 +48,7 @@ CodeLens benchmarks agents across three critical engineering domains:
 
 ---
 
-## 📈 Scoring System
+##  Scoring System
 
 ### Bug Detection
 
@@ -65,13 +65,13 @@ Severity accuracy is distance-weighted: misclassifying a **CRITICAL** issue as *
 Score = `0.6 × detection_rate + 0.2 × verdict_accuracy + 0.2 × detail_quality`.
 Detail quality rewards technical explanations that provide actionable developer feedback.
 
-### 🛑 Noise Budget
+###  Noise Budget
 
 Every episode permits **5 false positive credits**. Flagging non-existent code paths spends one credit. Reaching zero terminates the episode immediately to prevent agent hallucination loops.
 
 ---
 
-## 🔌 API Reference
+##  API Reference
 
 | Method | Endpoint                | Auth     | Description                                   |
 | :----- | :---------------------- | :------- | :-------------------------------------------- |
@@ -89,7 +89,7 @@ Authentication is disabled by default. Set `API_KEY_ENABLED=true` in `.env` for 
 
 ---
 
-## 🐳 Running with Docker
+##  Running with Docker
 
 ### Production Mode
 
@@ -112,7 +112,7 @@ docker compose -f docker-compose.test.yml up
 
 ---
 
-## 🤖 Baseline Agent & Evaluation
+##  Baseline Agent & Evaluation
 
 ### Single Scenario Trial
 
@@ -132,7 +132,7 @@ python scripts/evaluate.py --agent llm --api-key $ANTHROPIC_API_KEY
 
 ---
 
-## 🧠 Writing Your Own Agent
+##  Writing Your Own Agent
 
 CodeLens is designed to be agent-agnostic. Use standard HTTP requests to build your reviewer:
 
@@ -167,7 +167,7 @@ print(f"Final Score: {final['final_score']}")
 
 ---
 
-## 📂 Project Structure
+##  Project Structure
 
 ```text
 open-ev-code-handler/
@@ -183,12 +183,12 @@ open-ev-code-handler/
 ├── tests/                      # 155+ Parametrized tests
 ├── Dockerfile                  # Multi-stage, non-root build
 ├── docker-compose.yml          # Production orchestration
-└── codelens.yaml               # CodeLens v2 specification
+└── openenv.yaml               # CodeLens v2 specification
 ```
 
 ---
 
-## 🛠️ Development
+##  Development
 
 ```bash
 # Setup
@@ -205,7 +205,7 @@ pylint codelens_env/ app.py
 PYTHONPATH=. python scripts/validate.py
 ```
 
-## 👥 Authors & Maintainers
+##  Authors & Maintainers
 
 CodeLens is authored and maintained by:
 
@@ -214,7 +214,7 @@ CodeLens is authored and maintained by:
 
 ---
 
-## 📄 Contributing & License
+##  Contributing & License
 
 Please see **[CONTRIBUTING.md](CONTRIBUTING.md)** for details on authoring new scenarios and submission standards.
 

@@ -150,8 +150,10 @@ class CodeLensEnv:
             noise_budget=self.noise_budget,
             max_noise_budget=self.MAX_NOISE_BUDGET,
             issues_flagged=len(self.matched_issue_ids),
-            done=self.done
         )
+
+    def state(self) -> Observation:
+        return self._build_observation()
 
     def get_final_result(self) -> EpisodeResult:
         if self.task_id == TaskId.BUG_DETECTION:

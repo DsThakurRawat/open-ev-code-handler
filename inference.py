@@ -41,16 +41,20 @@ def log_start(task: str, env: str, model: str):
     print(f"[START] task={task} env={env} model={model}", flush=True)
 
 def log_step(step: int, action: str, reward: float, done: bool, error):
+    error_str = str(error) if error else "null"
+    done_str = "true" if done else "false"
     print(
-        f"[STEP] step={step} action={action!r} reward={reward:.4f} "
-        f"done={done} error={error}",
+        f"[STEP] step={step} action={action} reward={reward:.2f} "
+        f"done={done_str} error={error_str}",
         flush=True
     )
 
 def log_end(success: bool, steps: int, score: float, rewards: list):
+    success_str = "true" if success else "false"
+    rewards_str = ",".join([f"{r:.2f}" for r in rewards])
     print(
-        f"[END] success={success} steps={steps} score={score:.4f} "
-        f"rewards={rewards}",
+        f"[END] success={success_str} steps={steps} score={score:.2f} "
+        f"rewards={rewards_str}",
         flush=True
     )
 
@@ -193,7 +197,8 @@ def sanitize_action(action_dict: dict, task_id: str) -> dict:
 
 def run_episode(task_id: str, seed: int) -> dict:
     """Run a single episode. Returns {score, steps, success, rewards}."""
-    log_start(task_id, ENV_URL, MODEL_NAME)
+    benchmark = os.environ.get("BENCHMARK", "codelens")
+    log_start(task_id, benchmark, MODEL_NAME)
 
     # ── Reset ──────────────────────────────────────────────────────────────
     try:
@@ -284,7 +289,7 @@ def run_episode(task_id: str, seed: int) -> dict:
 def main():
     """Run all tasks across multiple seeds and print a summary."""
     print("=" * 60, flush=True)
-    print(f"CodeLens Baseline", flush=True)
+    print("CodeLens Baseline", flush=True)
     print(f"Model:  {MODEL_NAME}", flush=True)
     print(f"EnvURL: {ENV_URL}", flush=True)
     print("=" * 60, flush=True)

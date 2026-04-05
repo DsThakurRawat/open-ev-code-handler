@@ -37,7 +37,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **CLI**: Port mismatch in `baseline.py` (8000 → 7860) and added `--url`, `--task`, `--seed` CLI flags.
 - **Crash Fixes**: Leaderboard submit crash after list slicing (captured rank before slice).
 - **WebSocket**: Disconnect now handled with typed `WebSocketDisconnect` and `clients.discard()`.
-- **Metadata**: Incoherent weight structure in `codelens.yaml` replaced with named, accurate pairs.
+- **Metadata**: Incoherent weight structure in `openenv.yaml` replaced with named, accurate pairs.
 - **Security**: Implemented `TrustedHostMiddleware` and hardened headers.
 
 ## [0.1.0] - Initial Baseline Fork

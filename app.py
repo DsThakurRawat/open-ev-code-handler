@@ -20,7 +20,7 @@ from sqlmodel import Session
 import os
 
 from codelens_env.models import (
-    TaskId, Action, ResetResult, StepResult, EpisodeResult, ActionRecord
+    TaskId, Action, ResetResult, StepResult, EpisodeResult, ActionRecord, Observation
 )
 from codelens_env.env import CodeLensEnv
 from codelens_env.config import get_settings
@@ -228,6 +228,15 @@ async def step_env(request: Request, episode_id: str, action: Action, _: None = 
         return result
     except RuntimeError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/state/{episode_id}", response_model=Observation)
+@limiter.limit(f"{settings.rate_limit_per_minute}/minute")
+def get_state(request: Request, episode_id: str, _: None = Depends(verify_api_key)):
+    if episode_id not in episodes:
+        raise HTTPException(status_code=404, detail="Episode not found")
+    
+    env = episodes[episode_id]
+    return env._build_observation()
 
 @app.get("/result/{episode_id}", response_model=EpisodeResult)
 def get_result(

@@ -1,4 +1,4 @@
-# 🚀 Getting Started with CodeLens.
+#  Getting Started with CodeLens.
 
 Welcome to **CodeLens.**, a production-grade AI agent evaluation environment. This guide will help you get up and running in less than 2 minutes.
 
@@ -44,7 +44,7 @@ PYTHONPATH=. python app.py
 
 Once the server is running, you can access the CodeLens Dashboard at:
 
-👉 **[http://localhost:7860/dashboard](http://localhost:7860/dashboard)**
+ **[http://localhost:7860/dashboard](http://localhost:7860/dashboard)**
 
 From here, you can see the top-10 leaderboard and monitor real-time agent evaluations via the live event feed.
 
@@ -64,7 +64,7 @@ python scripts/evaluate.py --agent keyword
 
 ---
 
-## 🧪 Running Tests
+##  Running Tests
 
 To verify everything is working perfectly, you can run the full 155-test suite:
 
@@ -74,7 +74,7 @@ PYTHONPATH=. pytest tests/ -v
 
 ---
 
-## 🛠️ Troubleshooting
+##  Troubleshooting
 
 ### 1. `ModuleNotFoundError: No module named 'requests'`
 This happens if you haven't activated the virtual environment in your current terminal tab.
@@ -90,7 +90,7 @@ If the logo shows a broken image placeholder:
 
 ---
 
-## 🤝 Next Steps
+##  Next Steps
 
 - **Add Scenarios**: Learn how to author new code review benchmarks in **[CONTRIBUTING.md](CONTRIBUTING.md)**.
 - **Batch Evaluation**: Scale up from single evaluations to full 30-scenario reports using `scripts/evaluate.py`.

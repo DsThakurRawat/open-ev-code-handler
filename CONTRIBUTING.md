@@ -4,7 +4,7 @@ Welcome! We appreciate contributions of all kinds. Here's how to get started.
 
 ---
 
-## 🏗️ Development Setup
+##  Development Setup
 
 To get started with local development:
 
@@ -29,7 +29,7 @@ To get started with local development:
 
 ---
 
-## 📝 Adding a New Scenario
+##  Adding a New Scenario
 
 Scenarios live in `codelens_env/scenarios.py`. Each scenario needs:
 
@@ -65,7 +65,7 @@ All 30 (or more) scenarios must pass validation.
 
 ---
 
-## 🚀 Pull Request Process
+##  Pull Request Process
 
 1. Fork the repo and create a branch: `feat/my-feature`, `fix/my-bug`, `test/more-tests`
 2. Make your changes
@@ -75,7 +75,7 @@ All 30 (or more) scenarios must pass validation.
 
 ---
 
-## 📄 Code Style
+##  Code Style
 
 - **Type hints** on all public functions and methods
 - **Docstrings** on all public classes and non-trivial functions
@@ -85,7 +85,7 @@ All 30 (or more) scenarios must pass validation.
 
 ---
 
-## 📝 Commit Message Format
+##  Commit Message Format
 
 We use [Conventional Commits](https://www.conventionalcommits.org/):
 
