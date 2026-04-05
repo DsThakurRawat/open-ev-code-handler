@@ -1,10 +1,14 @@
-# AgentOrg CodeReview OpenEnv
+<p align="center">
+  <img src="assets/codelens-brand-v2.svg" width="400" alt="CodeLens." />
+</p>
+
+# CodeLens
 
 > **Can an AI agent catch the SQL injection that caused the $100M breach — before it ships?**
 
 This environment trains and evaluates agents on realistic Python code reviews grounded in real-world incident patterns. Unlike toy examples, every scenario is calibrated against actual production failure modes: payment mutations without idempotency keys, JWT verification bypassed for "dev convenience," pickle deserialization opening RCE vectors.
 
-[![OpenEnv](https://img.shields.io/badge/OpenEnv-1.0-blue)](https://huggingface.co/) [![Python 3.11](https://img.shields.io/badge/python-3.11-green)](https://python.org) [![FastAPI](https://img.shields.io/badge/FastAPI-0.109-red)](https://fastapi.tiangolo.com)
+[![CodeLens](https://img.shields.io/badge/CodeLens-1.0-blue)](https://huggingface.co/) [![Python 3.11](https://img.shields.io/badge/python-3.11-green)](https://python.org) [![FastAPI](https://img.shields.io/badge/FastAPI-0.109-red)](https://fastapi.tiangolo.com)
 
 ---
 
@@ -94,12 +98,12 @@ WS   /ws/events                → real-time step event stream
 
 ```
 .
-├── inference.py              # Root inference script (OpenEnv spec required)
+├── inference.py              # Root inference script (CodeLens spec required)
 ├── app.py                    # FastAPI entry point
-├── openenv.yaml              # OpenEnv spec manifest
+├── codelens.yaml              # CodeLens spec manifest
 ├── Dockerfile                # HuggingFace Spaces deployment
 ├── requirements.txt
-├── codereview_env/
+├── codelens_env/
 │   ├── env.py                # Episode state machine with incremental rewards
 │   ├── models.py             # Pydantic models (Observation, Action, StateResult...)
 │   ├── scenario_bank.py      # 30 scenarios with service metadata
@@ -115,29 +119,31 @@ WS   /ws/events                → real-time step event stream
 
 ---
 
-## Quick Start
+## \ud83d\ude80 Quick Start
 
-### 1. Install
-
+### 1. Setup Environment
 ```bash
 python3 -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 2. Start the Environment Server
+### 2. Initialize Database
+```bash
+# This creates the codelens.db with all standard scenarios
+python scripts/migrate.py init
+```
 
+### 3. Launch CodeLens
 ```bash
 PYTHONPATH=. python app.py
-# Server runs on http://localhost:7860
+# API and Dashboard are now live at http://localhost:7860/dashboard
 ```
 
-### 3. Run Tests
-
+### 4. Run Evaluation (Baseline)
+In a new terminal:
 ```bash
-PYTHONPATH=. pytest tests/ -v
+python scripts/evaluate.py --agent keyword
 ```
-
-### 4. Run Inference Script (OpenEnv spec format)
 
 ```bash
 export API_BASE_URL="https://api.openai.com/v1"
@@ -178,10 +184,10 @@ Output format:
 ## Docker / HuggingFace Spaces
 
 ```bash
-docker build -t codereview-openenv .
+docker build -t codelens-env .
 docker run -p 7860:7860 \
   -e PYTHONPATH=/app \
-  codereview-openenv
+  codelens-env
 ```
 
 The server starts automatically via `python app.py`.
@@ -197,4 +203,4 @@ The server starts automatically via `python app.py`.
 - **Blast Radius Context** — `affected_users`, `service_criticality`, `blast_radius` in every observation
 - **WebSocket Stream** — Real-time step event broadcasting on `/ws/events`
 - **Leaderboard** — In-memory top-10 tracking per task
-- **Full OpenEnv Spec** — `/reset`, `/step`, `/state`, `/result` + `[START]`/`[STEP]`/`[END]` stdout format
+- **Full CodeLens Spec** — `/reset`, `/step`, `/state`, `/result` + `[START]`/`[STEP]`/`[END]` stdout format

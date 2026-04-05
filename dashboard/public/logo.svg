@@ -1,0 +1,4 @@
+<svg width="200" height="50" viewBox="-10 -5 200 50" xmlns="http://www.w3.org/2000/svg">
+  <rect x="-10" y="-5" width="200" height="50" rx="8" fill="#ffffff" />
+  <text x="0" y="32" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900" font-size="36" fill="#09090b" letter-spacing="-0.03em">Codelens<tspan fill="#ef4444">.</tspan></text>
+</svg>

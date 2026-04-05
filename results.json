@@ -1,6 +1,6 @@
 [
   {
-    "episode_id": "d35a5286-23e7-4a53-a34c-6ca93f4e7134",
+    "episode_id": "0d8d0a22-2a81-48a1-8dbe-c9662da7dc2b",
     "task_id": "bug_detection",
     "seed": 0,
     "final_score": 0.0,
@@ -9,10 +9,10 @@
     "issues_total": 1,
     "noise_penalties": 0,
     "terminated_reason": "terminal_action",
-    "duration_seconds": 0.01
+    "duration_seconds": 0.03
   },
   {
-    "episode_id": "9c81d2b3-f0dd-4efc-915e-4b7dfcf355ef",
+    "episode_id": "6ddc5a56-86c1-43f2-8839-b6ad9eac2ad9",
     "task_id": "bug_detection",
     "seed": 1,
     "final_score": 0.0,
@@ -21,10 +21,10 @@
     "issues_total": 1,
     "noise_penalties": 0,
     "terminated_reason": "terminal_action",
-    "duration_seconds": 0.01
+    "duration_seconds": 0.02
   },
   {
-    "episode_id": "38fba47b-2915-4fba-89ef-865834bcc67b",
+    "episode_id": "df00496e-0e19-4049-82d9-6a0f2a1e8f2a",
     "task_id": "bug_detection",
     "seed": 2,
     "final_score": 0.9167,
@@ -33,10 +33,10 @@
     "issues_total": 1,
     "noise_penalties": 5,
     "terminated_reason": "noise_exhausted",
-    "duration_seconds": 0.02
+    "duration_seconds": 0.06
   },
   {
-    "episode_id": "ce85c7b9-2c34-4d29-96e6-83b66da4c4a2",
+    "episode_id": "26837a97-d3ad-4fd7-8e74-d0d713b9b137",
     "task_id": "bug_detection",
     "seed": 3,
     "final_score": 0.9167,
@@ -45,10 +45,10 @@
     "issues_total": 1,
     "noise_penalties": 5,
     "terminated_reason": "noise_exhausted",
-    "duration_seconds": 0.02
+    "duration_seconds": 0.04
   },
   {
-    "episode_id": "03b43be8-968b-4d35-8cb6-4a4a7211061d",
+    "episode_id": "41b3e01d-5498-42a1-a3f9-44bb87f542b6",
     "task_id": "bug_detection",
     "seed": 4,
     "final_score": 0.8267,
@@ -60,7 +60,7 @@
     "duration_seconds": 0.03
   },
   {
-    "episode_id": "1acad7bc-2374-4d70-95ad-f5536ecc22a6",
+    "episode_id": "8331b8bf-f397-49be-bc07-62bb0bdddd5c",
     "task_id": "bug_detection",
     "seed": 5,
     "final_score": 0.0,
@@ -69,10 +69,10 @@
     "issues_total": 1,
     "noise_penalties": 0,
     "terminated_reason": "terminal_action",
-    "duration_seconds": 0.01
+    "duration_seconds": 0.02
   },
   {
-    "episode_id": "fa84dd18-e38c-412d-a252-206a514fc352",
+    "episode_id": "22341ab4-ea27-416b-ba40-53f93b6090c9",
     "task_id": "bug_detection",
     "seed": 6,
     "final_score": 0.0,
@@ -81,10 +81,10 @@
     "issues_total": 1,
     "noise_penalties": 0,
     "terminated_reason": "terminal_action",
-    "duration_seconds": 0.01
+    "duration_seconds": 0.02
   },
   {
-    "episode_id": "c43cf6db-d5ca-4c45-871d-1a0bc64602fa",
+    "episode_id": "9fc11809-6ba4-4bf6-b00e-9b8ffc61218f",
     "task_id": "bug_detection",
     "seed": 7,
     "final_score": 0.0,
@@ -96,7 +96,7 @@
     "duration_seconds": 0.02
   },
   {
-    "episode_id": "7dcff1f7-41f4-483f-8fab-caa6d62f5b66",
+    "episode_id": "dce54792-7fba-4e8c-8feb-404aa655172f",
     "task_id": "bug_detection",
     "seed": 8,
     "final_score": 0.9167,
@@ -105,10 +105,10 @@
     "issues_total": 1,
     "noise_penalties": 5,
     "terminated_reason": "noise_exhausted",
-    "duration_seconds": 0.02
+    "duration_seconds": 0.04
   },
   {
-    "episode_id": "b379af5c-4096-45fd-95fe-534a0bf4a7af",
+    "episode_id": "be559f48-b216-49b9-8f3d-ad9b50da3751",
     "task_id": "bug_detection",
     "seed": 9,
     "final_score": 0.0,
@@ -117,10 +117,10 @@
     "issues_total": 1,
     "noise_penalties": 5,
     "terminated_reason": "noise_exhausted",
-    "duration_seconds": 0.02
+    "duration_seconds": 0.03
   },
   {
-    "episode_id": "ee70e3aa-fbaf-4a2e-8b5e-fc62a8a93192",
+    "episode_id": "b2029cb1-c72e-438a-bd96-98a0aa9bc141",
     "task_id": "security_audit",
     "seed": 0,
     "final_score": 0.0,
@@ -129,22 +129,22 @@
     "issues_total": 1,
     "noise_penalties": 5,
     "terminated_reason": "noise_exhausted",
-    "duration_seconds": 0.02
+    "duration_seconds": 0.03
   },
   {
-    "episode_id": "c9df9d0e-1719-4fbd-b6e8-3b5c5663a0a2",
+    "episode_id": "e383f50e-5797-40d9-9f54-aa4142247a6e",
     "task_id": "security_audit",
     "seed": 1,
-    "final_score": 0.85,
+    "final_score": 1.0,
     "steps_taken": 6,
     "issues_found": 1,
     "issues_total": 1,
     "noise_penalties": 5,
     "terminated_reason": "noise_exhausted",
-    "duration_seconds": 0.02
+    "duration_seconds": 0.04
   },
   {
-    "episode_id": "fbf2c333-8b32-4ab8-b260-bdeb2ccda91b",
+    "episode_id": "6560439d-9050-4c94-96b1-c31111081c2e",
     "task_id": "security_audit",
     "seed": 2,
     "final_score": 0.0,
@@ -153,22 +153,22 @@
     "issues_total": 1,
     "noise_penalties": 5,
     "terminated_reason": "noise_exhausted",
-    "duration_seconds": 0.04
+    "duration_seconds": 0.03
   },
   {
-    "episode_id": "4fd0a956-7b46-4819-b59d-5e54bec65311",
+    "episode_id": "d9a9d12d-384c-4dd2-86cb-b55ea7604e60",
     "task_id": "security_audit",
     "seed": 3,
-    "final_score": 0.775,
+    "final_score": 0.85,
     "steps_taken": 6,
     "issues_found": 1,
     "issues_total": 1,
     "noise_penalties": 5,
     "terminated_reason": "noise_exhausted",
-    "duration_seconds": 0.03
+    "duration_seconds": 0.04
   },
   {
-    "episode_id": "ee98565e-4fc1-430c-8463-c0bcd801f107",
+    "episode_id": "463b8d96-ad63-472f-ad93-f20c99afe96e",
     "task_id": "security_audit",
     "seed": 4,
     "final_score": 0.0,
@@ -180,7 +180,7 @@
     "duration_seconds": 0.03
   },
   {
-    "episode_id": "7a5a3689-5f55-4f1c-8c8d-81cfaa1e35e6",
+    "episode_id": "15e9c92a-559a-4ba6-b75b-b12ac6055f91",
     "task_id": "security_audit",
     "seed": 5,
     "final_score": 0.0,
@@ -189,10 +189,10 @@
     "issues_total": 1,
     "noise_penalties": 5,
     "terminated_reason": "noise_exhausted",
-    "duration_seconds": 0.02
+    "duration_seconds": 0.06
   },
   {
-    "episode_id": "1a2c2666-389e-4835-8aab-7e7ff63a2511",
+    "episode_id": "38bd8513-7511-4a2f-8642-fc23f50b61bd",
     "task_id": "security_audit",
     "seed": 6,
     "final_score": 0.0,
@@ -201,10 +201,10 @@
     "issues_total": 1,
     "noise_penalties": 5,
     "terminated_reason": "noise_exhausted",
-    "duration_seconds": 0.02
+    "duration_seconds": 0.03
   },
   {
-    "episode_id": "9e78465a-b7d6-4ca8-8aae-761a2e55be82",
+    "episode_id": "8a6e48fd-1b17-475f-b495-a1cd8ce2e70c",
     "task_id": "security_audit",
     "seed": 7,
     "final_score": 0.0,
@@ -213,10 +213,10 @@
     "issues_total": 1,
     "noise_penalties": 5,
     "terminated_reason": "noise_exhausted",
-    "duration_seconds": 0.02
+    "duration_seconds": 0.03
   },
   {
-    "episode_id": "e59ee756-fbf1-4aa1-ac42-d1cb23079d88",
+    "episode_id": "3ec40833-ce55-4a63-ad90-55b2e35370d1",
     "task_id": "security_audit",
     "seed": 8,
     "final_score": 0.0,
@@ -225,10 +225,10 @@
     "issues_total": 1,
     "noise_penalties": 5,
     "terminated_reason": "noise_exhausted",
-    "duration_seconds": 0.02
+    "duration_seconds": 0.03
   },
   {
-    "episode_id": "f573727f-ac41-47ba-bcb9-55495da61615",
+    "episode_id": "87fa57a3-27f3-4f9b-a0ad-008ff9b4c7f2",
     "task_id": "security_audit",
     "seed": 9,
     "final_score": 0.0,
@@ -237,10 +237,10 @@
     "issues_total": 1,
     "noise_penalties": 5,
     "terminated_reason": "noise_exhausted",
-    "duration_seconds": 0.02
+    "duration_seconds": 0.03
   },
   {
-    "episode_id": "0c368016-4685-4699-abf0-d74337a3ea8d",
+    "episode_id": "8a878e69-51c2-4992-8276-616cbc798efd",
     "task_id": "architectural_review",
     "seed": 0,
     "final_score": 0.0,
@@ -249,10 +249,10 @@
     "issues_total": 1,
     "noise_penalties": 0,
     "terminated_reason": "terminal_action",
-    "duration_seconds": 0.01
+    "duration_seconds": 0.02
   },
   {
-    "episode_id": "5dbf1824-e62b-4491-aaf2-c6ec3a2ae597",
+    "episode_id": "c85766aa-d231-4998-8d95-b4dbbfd5aea6",
     "task_id": "architectural_review",
     "seed": 1,
     "final_score": 0.059,
@@ -261,10 +261,10 @@
     "issues_total": 1,
     "noise_penalties": 5,
     "terminated_reason": "noise_exhausted",
-    "duration_seconds": 0.02
+    "duration_seconds": 0.04
   },
   {
-    "episode_id": "b2249f5c-8e6a-4ee4-b973-2dd428613a7c",
+    "episode_id": "29122fdb-ed30-4a46-8b04-4aa8c2025e6c",
     "task_id": "architectural_review",
     "seed": 2,
     "final_score": 0.661,
@@ -273,10 +273,10 @@
     "issues_total": 1,
     "noise_penalties": 5,
     "terminated_reason": "noise_exhausted",
-    "duration_seconds": 0.02
+    "duration_seconds": 0.04
   },
   {
-    "episode_id": "0e58c8c0-efa1-4c16-9002-6d48e8f82439",
+    "episode_id": "1388c816-8e96-4014-b255-81382e9353ba",
     "task_id": "architectural_review",
     "seed": 3,
     "final_score": 0.658,
@@ -285,10 +285,10 @@
     "issues_total": 1,
     "noise_penalties": 5,
     "terminated_reason": "noise_exhausted",
-    "duration_seconds": 0.02
+    "duration_seconds": 0.03
   },
   {
-    "episode_id": "69cf00eb-5a20-4347-9887-f9806026a66b",
+    "episode_id": "adee24d2-cb77-48b6-b00b-72c39d7d7c7e",
     "task_id": "architectural_review",
     "seed": 4,
     "final_score": 0.058,
@@ -297,10 +297,10 @@
     "issues_total": 1,
     "noise_penalties": 5,
     "terminated_reason": "noise_exhausted",
-    "duration_seconds": 0.02
+    "duration_seconds": 0.03
   },
   {
-    "episode_id": "233ff87c-475f-4485-bd76-9abab4d2a304",
+    "episode_id": "12508a15-eb46-4628-b750-cde1b5f91828",
     "task_id": "architectural_review",
     "seed": 5,
     "final_score": 0.657,
@@ -309,10 +309,10 @@
     "issues_total": 1,
     "noise_penalties": 5,
     "terminated_reason": "noise_exhausted",
-    "duration_seconds": 0.02
+    "duration_seconds": 0.04
   },
   {
-    "episode_id": "89210c97-a95a-49c8-a9d1-8dbe6db92238",
+    "episode_id": "520fb8ad-58fe-48fa-8a96-89e552e12924",
     "task_id": "architectural_review",
     "seed": 6,
     "final_score": 0.059,
@@ -321,10 +321,10 @@
     "issues_total": 1,
     "noise_penalties": 5,
     "terminated_reason": "noise_exhausted",
-    "duration_seconds": 0.02
+    "duration_seconds": 0.03
   },
   {
-    "episode_id": "80c89d9d-92e9-4fbc-9a4f-401848c92cce",
+    "episode_id": "86982fa4-cee7-48fc-b8d1-347a2f650f6d",
     "task_id": "architectural_review",
     "seed": 7,
     "final_score": 0.664,
@@ -333,10 +333,10 @@
     "issues_total": 1,
     "noise_penalties": 5,
     "terminated_reason": "noise_exhausted",
-    "duration_seconds": 0.02
+    "duration_seconds": 0.04
   },
   {
-    "episode_id": "325d65a3-94e7-40f8-90a6-d93bac2cbd9e",
+    "episode_id": "086e541a-776e-4ac6-b44e-1eeb76d88b4e",
     "task_id": "architectural_review",
     "seed": 8,
     "final_score": 0.039,
@@ -345,10 +345,10 @@
     "issues_total": 1,
     "noise_penalties": 5,
     "terminated_reason": "noise_exhausted",
-    "duration_seconds": 0.02
+    "duration_seconds": 0.03
   },
   {
-    "episode_id": "d94abdb2-90c6-424a-9a26-e798a2ea9b13",
+    "episode_id": "3bcd91ce-0d0d-48c5-ab25-bc8534906f5b",
     "task_id": "architectural_review",
     "seed": 9,
     "final_score": 0.075,
@@ -357,6 +357,6 @@
     "issues_total": 1,
     "noise_penalties": 5,
     "terminated_reason": "noise_exhausted",
-    "duration_seconds": 0.02
+    "duration_seconds": 0.03
   }
 ]

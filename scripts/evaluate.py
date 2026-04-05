@@ -70,7 +70,7 @@ def print_summary(results: list):
     print("="*60)
 
 def main():
-    parser = argparse.ArgumentParser(description="Batch evaluation of all 30 CodeReview scenarios")
+    parser = argparse.ArgumentParser(description="Batch evaluation of all 30 CodeLens scenarios")
     parser.add_argument("--url", default="http://localhost:7860")
     parser.add_argument("--agent", default="keyword", choices=["keyword", "llm"])
     parser.add_argument("--api-key", default="")

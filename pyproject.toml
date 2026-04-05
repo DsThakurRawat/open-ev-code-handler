@@ -1,5 +1,5 @@
 [tool.coverage.run]
-source = ["codereview_env", "app"]
+source = ["codelens_env", "app"]
 omit = ["tests/*", "scripts/*", "*/migrations/*"]
 
 [tool.coverage.report]

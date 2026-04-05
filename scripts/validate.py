@@ -1,10 +1,10 @@
 import sys
-from codereview_env.models import TaskId
-from codereview_env.env import CodeReviewEnv
+from codelens_env.models import TaskId
+from codelens_env.env import CodeLensEnv
 
 def validate_environment():
-    print("=== OpenEnv Validation Suite ===")
-    env = CodeReviewEnv()
+    print("=== CodeLens Validation Suite ===")
+    env = CodeLensEnv()
     
     tasks = [TaskId.BUG_DETECTION, TaskId.SECURITY_AUDIT, TaskId.ARCHITECTURAL_REVIEW]
     total_scenarios = 30

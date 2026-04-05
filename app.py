@@ -2,25 +2,29 @@ import uuid
 import logging
 import asyncio
 import json
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, AsyncGenerator
 from datetime import datetime, timezone
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, Depends, Security, Query, BackgroundTasks, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi.security.api_key import APIKeyHeader
+from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from sqlmodel import Session
+import os
 
-from codereview_env.models import (
+from codelens_env.models import (
     TaskId, Action, ResetResult, StepResult, EpisodeResult, ActionRecord
 )
-from codereview_env.env import CodeReviewEnv
-from codereview_env.config import get_settings
-from codereview_env.database import (
+from codelens_env.env import CodeLensEnv
+from codelens_env.config import get_settings
+from codelens_env.database import (
     create_db_and_tables, get_session, save_episode,
     get_episode, get_leaderboard_db, submit_leaderboard, get_stats,
     LeaderboardRecord
@@ -32,17 +36,45 @@ logging.basicConfig(
     level=getattr(logging, settings.log_level),
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
 )
-logger = logging.getLogger("codereview_env")
+logger = logging.getLogger("codelens_env")
+
+# ── Lifespan ──────────────────────────────────────────────────────────────────
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    create_db_and_tables()
+    cleanup_task = asyncio.create_task(cleanup_expired_episodes())
+    logger.info(f"CodeLens API started — DB at {settings.db_path}")
+    
+    yield
+    
+    # Shutdown
+    cleanup_task.cancel()
+    try:
+        await cleanup_task
+    except asyncio.CancelledError:
+        pass
+    logger.info("CodeLens API shutting down")
 
 # ── App Initialization ────────────────────────────────────────────────────────
 app = FastAPI(
-    title="AgentOrg CodeReview OpenEnv API",
+    title="CodeLens API",
     description=(
         "AI Senior Code Reviewer evaluation environment. "
         "Trains agents to detect bugs, security vulnerabilities, and architectural issues "
         "in realistic Python PRs."
     ),
     version="1.0.0",
+    lifespan=lifespan,
+)
+
+# ── CORS Middleware ───────────────────────────────────────────────────────────
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"] if settings.app_env == "development" else [f"http://localhost:{settings.app_port}"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # ── Rate Limiting ─────────────────────────────────────────────────────────────
@@ -60,7 +92,7 @@ async def verify_api_key(api_key: str = Security(API_KEY_HEADER)):
         raise HTTPException(status_code=403, detail="Invalid or missing API key")
 
 # ── Storage & TTL ─────────────────────────────────────────────────────────────
-episodes: Dict[str, CodeReviewEnv] = {}
+episodes: Dict[str, CodeLensEnv] = {}
 episode_timestamps: Dict[str, datetime] = {}
 
 async def cleanup_expired_episodes():
@@ -78,11 +110,6 @@ async def cleanup_expired_episodes():
         if expired:
             logger.info(f"Cleaned up {len(expired)} expired episodes")
 
-@app.on_event("startup")
-async def startup_event():
-    create_db_and_tables()
-    asyncio.create_task(cleanup_expired_episodes())
-    logger.info(f"CodeReview API started \u2014 DB at {settings.db_path}")
 
 # ── Models ────────────────────────────────────────────────────────────────────
 class ResetRequest(BaseModel):
@@ -146,14 +173,15 @@ def health_check():
         "env_ready": True,
         "env": settings.app_env,
         "active_episodes": len(episodes),
-        "auth_enabled": settings.api_key_enabled
+        "auth_enabled": settings.api_key_enabled,
+        "dashboard_url": "/dashboard"
     }
 
 @app.post("/reset", response_model=ResetResponse)
 @limiter.limit(f"{settings.rate_limit_per_minute}/minute")
 def reset_env(request: Request, req: ResetRequest, _: None = Depends(verify_api_key)):
     episode_id = str(uuid.uuid4())
-    env        = CodeReviewEnv()
+    env        = CodeLensEnv()
     result     = env.reset(req.task_id, req.seed)
     episodes[episode_id] = env
     episode_timestamps[episode_id] = datetime.now(timezone.utc)
@@ -296,6 +324,27 @@ async def websocket_endpoint(websocket: WebSocket):
         pass
     finally:
         clients.discard(websocket)
+
+# ── Dashboard ─────────────────────────────────────────────────────────────────
+static_dir = os.path.join(os.path.dirname(__file__), "static", "dashboard")
+if os.path.exists(static_dir):
+    app.mount("/dashboard/assets", StaticFiles(directory=os.path.join(static_dir, "assets")), name="dashboard-assets")
+
+@app.get("/dashboard", include_in_schema=False)
+@app.get("/dashboard/{full_path:path}", include_in_schema=False)
+def dashboard(full_path: str = ""):
+    """Serve the React dashboard SPA (index.html for all sub-paths)."""
+    # 1. Check if the requested full_path is a specific static file (e.g. logo.svg)
+    if full_path:
+        static_file = os.path.join(os.path.dirname(__file__), "static", "dashboard", full_path)
+        if os.path.exists(static_file) and os.path.isfile(static_file):
+            return FileResponse(static_file)
+
+    # 2. Fallback to index.html for SPA routing
+    html_path = os.path.join(os.path.dirname(__file__), "static", "dashboard", "index.html")
+    if not os.path.exists(html_path):
+        raise HTTPException(status_code=404, detail="Dashboard not found. Run: cd dashboard && npm run build")
+    return FileResponse(html_path)
 
 if __name__ == "__main__":
     import uvicorn

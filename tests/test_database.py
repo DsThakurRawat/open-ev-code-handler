@@ -1,6 +1,6 @@
 from sqlmodel import Session
-from codereview_env.database import save_episode, get_episode, submit_leaderboard, get_leaderboard_db, get_stats
-from codereview_env.models import EpisodeResult, TaskId, ActionRecord, ActionType
+from codelens_env.database import save_episode, get_episode, submit_leaderboard, get_leaderboard_db, get_stats
+from codelens_env.models import EpisodeResult, TaskId, ActionRecord, ActionType
 
 def make_result(episode_id="test-ep-1", score=0.85):
     return EpisodeResult(

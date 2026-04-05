@@ -12,3 +12,4 @@ python-dotenv==1.0.1
 sqlmodel==0.0.16
 aiosqlite==0.20.0
 pytest-cov==4.1.0
+aiofiles==23.2.1

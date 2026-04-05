@@ -1,18 +1,85 @@
+# Environment/Virtual Environment
 venv/
-__pycache__/
-*.pyc
+.venv/
+env/
 .env
-.pytest_cache/
-Roadmap.html
-.DS_Store
-**/.DS_Store
-*.egg-info/
-dist/
-build/
-.idea/
-.vscode/
+.env.local
+.env.*.local
 
-# Persistence
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.noserc
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.nox/
+
+# Node.js / Dashboard
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+dashboard/node_modules/
+dashboard/dist/
+dashboard/build/
+dashboard/.env
+dashboard/.env.local
+
+# Databases & Persistence
 data/*.db
 data/*.db-shm
 data/*.db-wal
+codelens.db
+*.sqlite3
+
+# OS Specific
+.DS_Store
+.DS_Store?
+**/._*
+**/.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+.project
+.pydevproject
+.settings/
+.history/
+
+# Project Specific Reference Docs
+# (Per user request to exclude from commits)
+files/
+Roadmap.html

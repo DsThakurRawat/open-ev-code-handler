@@ -255,7 +255,7 @@ def save_results(results: list, output_path: str):
                 writer.writerows(results)
 
 def main():
-    parser = argparse.ArgumentParser(description="AgentOrg CodeReview Baseline Agent")
+    parser = argparse.ArgumentParser(description="CodeLens Baseline Agent")
     parser.add_argument("--url", default="http://localhost:7860")
     parser.add_argument("--task", default="bug_detection",
                         choices=["bug_detection", "security_audit", "architectural_review"])

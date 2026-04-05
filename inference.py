@@ -1,13 +1,13 @@
 """
-OpenEnv Inference Script — AgentOrg CodeReview Environment
+CodeLens Inference Script — CodeLens Environment
 ==========================================================
 Required env vars:
   API_BASE_URL  — OpenAI-compatible base URL  (e.g. https://api.openai.com/v1)
   MODEL_NAME    — Model identifier             (e.g. gpt-4o, gpt-3.5-turbo)
   HF_TOKEN      — Hugging Face token (used as api_key for OpenAI client)
-  ENV_URL       — CodeReview env URL           (default: http://localhost:7860)
+  ENV_URL       — CodeLens env URL           (default: http://localhost:7860)
 
-Output format (stdout, per OpenEnv spec):
+Output format (stdout, per CodeLens spec):
   [START] task=<task_id> env=<env_url> model=<model>
   [STEP] step=<n> action=<str> reward=<float> done=<bool> error=<str|None>
   [END] success=<bool> steps=<int> score=<float> rewards=<list>
@@ -16,10 +16,11 @@ Output format (stdout, per OpenEnv spec):
 import os
 import sys
 import json
+import time
 import requests
 from openai import OpenAI
 
-# ── Environment Variables (exact names required by OpenEnv spec) ──────────────
+# ── Environment Variables (exact names required by CodeLens spec) ──────────────
 API_BASE_URL = os.environ.get("API_BASE_URL", "https://api.openai.com/v1")
 MODEL_NAME   = os.environ.get("MODEL_NAME", "gpt-3.5-turbo")
 HF_TOKEN     = os.environ.get("HF_TOKEN", "dummy")
@@ -35,7 +36,7 @@ SEEDS             = [0, 1, 2]   # Run each task on 3 seeds for robust baseline
 client = OpenAI(api_key=HF_TOKEN, base_url=API_BASE_URL)
 
 
-# ── Structured log helpers (mandatory OpenEnv format) ─────────────────────────
+# ── Structured log helpers (mandatory CodeLens format) ─────────────────────────
 def log_start(task: str, env: str, model: str):
     print(f"[START] task={task} env={env} model={model}", flush=True)
 
@@ -121,16 +122,32 @@ Output a single JSON action object. If you've already flagged the main issues, s
 
 
 def call_llm(messages: list) -> dict:
-    """Call the LLM and parse its JSON response into an action dict."""
-    response = client.chat.completions.create(
-        model=MODEL_NAME,
-        messages=messages,
-        temperature=0.1,
-        max_tokens=512,
-        response_format={"type": "json_object"},
-    )
-    content = response.choices[0].message.content.strip()
-    return json.loads(content)
+    """Call the LLM with retries and parse its JSON response."""
+    last_err = None
+    for attempt in range(3):
+        try:
+            response = client.chat.completions.create(
+                model=MODEL_NAME,
+                messages=messages,
+                temperature=0.1,
+                max_tokens=600,
+                response_format={"type": "json_object"},
+            )
+            content = response.choices[0].message.content.strip()
+            
+            # Robust JSON extract (some models might still use markdown)
+            if "```json" in content:
+                content = content.split("```json")[1].split("```")[0].strip()
+            elif "```" in content:
+                 content = content.split("```")[1].split("```")[0].strip()
+
+            return json.loads(content)
+        except Exception as e:
+            last_err = e
+            if attempt < 2:
+                time.sleep(2 ** attempt)
+    
+    raise last_err or Exception("LLM call failed after retries")
 
 
 def sanitize_action(action_dict: dict, task_id: str) -> dict:
@@ -267,7 +284,7 @@ def run_episode(task_id: str, seed: int) -> dict:
 def main():
     """Run all tasks across multiple seeds and print a summary."""
     print("=" * 60, flush=True)
-    print(f"AgentOrg CodeReview OpenEnv Baseline", flush=True)
+    print(f"CodeLens Baseline", flush=True)
     print(f"Model:  {MODEL_NAME}", flush=True)
     print(f"EnvURL: {ENV_URL}", flush=True)
     print("=" * 60, flush=True)
