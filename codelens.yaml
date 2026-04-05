@@ -1,54 +1,76 @@
-version: "1.0"
-name: "codelens-codelens"
+version: "2.0"
+name: "agentorg-codereview"
 description: >
-  AI Senior Code Reviewer evaluation environment — trains agents to detect bugs,
-  security vulnerabilities, and architectural issues in realistic Python PRs.
-  Grounded in real-world incident patterns (payment systems, auth layers, microservices).
+  AI Senior Code Reviewer evaluation environment for CodeLens.
+  Benchmarks agents on 30 synthetic pull requests across Bug Detection,
+  Security Audit, and Architectural Review tasks.
+  
 entry_point: "app:app"
-base_url: "http://localhost:7860"
-api_version: "v1"
-
-tags:
-  - codelens
-  - code-review
-  - security
-  - software-engineering
+dashboard: "/dashboard"
+api_docs: "/docs"
 
 tasks:
   - id: "bug_detection"
-    difficulty: easy
+    description: "Identify logical errors and edge cases in Python code"
     max_steps: 10
     scenarios: 10
-    description: >
-      Identify logical errors, off-by-one bugs, mutable default arguments,
-      None dereferences, race conditions, and type mismatches in Python snippets.
-      Agents must FLAG issues with correct category/severity and submit a final verdict.
+    difficulty_distribution:
+      easy: 2
+      medium: 6
+      hard: 2
 
   - id: "security_audit"
-    difficulty: medium
+    description: "Detect OWASP Top 10 vulnerabilities in Python code"
     max_steps: 15
     scenarios: 10
-    description: >
-      Detect OWASP Top-10 vulnerabilities: SQL injection, XSS, hardcoded secrets,
-      JWT bypass, insecure deserialization (pickle RCE), path traversal, timing attacks,
-      CORS misconfiguration, and missing rate limits in a payment-adjacent Python codebase.
+    difficulty_distribution:
+      easy: 1
+      medium: 7
+      hard: 2
 
   - id: "architectural_review"
-    difficulty: hard
+    description: "Evaluate design patterns, coupling, and system constraints"
     max_steps: 20
     scenarios: 10
-    description: >
-      Evaluate system design quality: SRP violations, direct DB access bypassing API layers,
-      synchronous blocking calls in event loops, missing idempotency keys on payment mutations,
-      N+1 query patterns, god object anti-patterns, and shared mutable state between microservices.
-      Requires reasoning about blast radius and service criticality in addition to code issues.
+    difficulty_distribution:
+      easy: 0
+      medium: 7
+      hard: 3
+
+environment:
+  noise_budget: 5
+  line_tolerance_bug: 3
+  line_tolerance_arch: 5
+  keyword_match: "any"       # agent body must contain ANY listed keyword
+  case_sensitive: false
 
 grading:
   type: "deterministic"
-  issue_matching:
+  
+  bug_detection:
     coverage_weight: 0.4
-    precision_weight: 0.6
-  quality_scoring:
-    severity_weight: 0.7
-    keyword_weight: 0.3
+    avg_issue_score_weight: 0.6
+    issue_score:
+      keyword_weight: 0.5
+      severity_weight: 0.5
+    false_positive_penalty: 0.1
 
+  security_audit:
+    formula: "avg_issue_score"
+    issue_score:
+      severity_weight: 0.7
+      keyword_weight: 0.3
+    severity_scale:
+      critical: 4
+      high: 3
+      medium: 2
+      low: 1
+      info: 0
+    severity_penalty_per_level: 0.3
+
+  architectural_review:
+    issue_detection_weight: 0.6
+    verdict_weight: 0.2
+    quality_weight: 0.2
+    quality_min_body_length: 20
+    quality_max_body_length: 200

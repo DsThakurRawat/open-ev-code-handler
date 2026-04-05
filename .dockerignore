@@ -1,0 +1,64 @@
+# Python Artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+MANIFEST
+
+# Node.js / Dashboard (Exclude sources, only keep builds)
+node_modules/
+dashboard/node_modules/
+dashboard/src/
+dashboard/public/
+dashboard/tests/
+dashboard/*.json
+dashboard/*.config.js
+dashboard/*.config.ts
+
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# Testing & Coverage
+tests/
+.pytest_cache/
+coverage.xml
+.coverage
+htmlcov/
+pytest.ini
+
+# Git
+.git/
+.gitignore
+
+# Environment & Private Files
+.env
+.env.*
+*.env.local
+.history/
+Roadmap.html
+
+# Data Persistence (Ensures no local DB leaks into image)
+data/
+codelens.db
+*.sqlite3
+
+# OS Specific
+.DS_Store
+.DS_Store?
+**/._*
+**/.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo

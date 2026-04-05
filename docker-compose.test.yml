@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  test:
+    build:
+      context: .
+      target: builder
+    container_name: codelens-test
+    command: >
+      sh -c "/build/venv/bin/pip install pytest pytest-cov &&
+             PYTHONPATH=/app /build/venv/bin/python -m pytest tests/ -v --tb=short"
+    volumes:
+      - .:/app
+    environment:
+      - APP_ENV=test
