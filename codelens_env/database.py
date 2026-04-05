@@ -7,6 +7,20 @@ from codelens_env.models import EpisodeResult, TaskId
 
 def get_engine():
     settings = get_settings()
+    
+    if settings.database_url:
+        # Support Render/Heroku 'postgres://' URLs by converting to 'postgresql://'
+        url = settings.database_url
+        if url.startswith("postgres://"):
+            url = url.replace("postgres://", "postgresql://", 1)
+        
+        return create_engine(
+            url,
+            echo=settings.db_echo,
+            pool_pre_ping=True,  # Ensure connections are alive
+        )
+    
+    # Fallback to local SQLite
     Path(settings.db_path).parent.mkdir(parents=True, exist_ok=True)
     return create_engine(
         f"sqlite:///{settings.db_path}",

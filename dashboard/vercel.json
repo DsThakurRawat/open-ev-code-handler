@@ -1,0 +1,15 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://YOUR_BACKEND_URL.render.com/$1"
+    },
+    {
+      "source": "/ws/(.*)",
+      "destination": "wss://YOUR_BACKEND_URL.render.com/ws/$1"
+    }
+  ],
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist"
+}

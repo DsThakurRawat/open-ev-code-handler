@@ -42,9 +42,13 @@ logger = logging.getLogger("codelens_env")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    create_db_and_tables()
+    if not os.getenv("TESTING"):
+        create_db_and_tables()
+        logger.info(f"CodeLens API started — DB at {settings.db_path}")
+    else:
+        logger.info("CodeLens API running in TESTING mode — DB initialization skipped")
+
     cleanup_task = asyncio.create_task(cleanup_expired_episodes())
-    logger.info(f"CodeLens API started — DB at {settings.db_path}")
     
     yield
     

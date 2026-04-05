@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
@@ -19,6 +20,7 @@ class Settings(BaseSettings):
     rate_limit_per_minute: int = 60        # requests per minute per IP
     
     # Persistence
+    database_url: Optional[str] = None
     db_path: str = "./data/codelens.db"
     db_echo: bool = False    # Set True to log all SQL queries
 

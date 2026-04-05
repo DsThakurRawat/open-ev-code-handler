@@ -3,15 +3,13 @@ from fastapi.testclient import TestClient
 from app import app
 from codelens_env.models import TaskId, ActionType, Category, Severity, Verdict
 
-def test_api_health():
-    client = TestClient(app)
+def test_api_health(client):
     response = client.get("/health")
     assert response.status_code == 200
     assert response.json()["status"] == "ok"
     assert response.json()["env_ready"] is True
 
-def test_api_workflow():
-    client = TestClient(app)
+def test_api_workflow(client):
     
     # 1. Reset
     reset_resp = client.post("/reset", json={"task_id": "bug_detection", "seed": 1})
@@ -34,8 +32,7 @@ def test_api_workflow():
     assert result_resp.status_code == 200
     assert result_resp.json()["final_score"] >= 0
 
-def test_api_leaderboard():
-    client = TestClient(app)
+def test_api_leaderboard(client):
     # Submit a score
     sub = {
         "agent_name": "test_agent",
@@ -55,8 +52,7 @@ def test_api_leaderboard():
     assert len(bug_entries) > 0
     assert bug_entries[0]["agent_name"] == "test_agent"
 
-def test_api_invalid_episode():
-    client = TestClient(app)
+def test_api_invalid_episode(client):
     response = client.post("/step/nonexistent-id", json={
         "action_type": "comment",
         "body": "hello"
