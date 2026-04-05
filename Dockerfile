@@ -8,11 +8,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies into /build/venv
+# Install Python dependencies into /app/venv
 COPY requirements.txt .
-RUN python -m venv /build/venv \
-    && /build/venv/bin/pip install --upgrade pip \
-    && /build/venv/bin/pip install --no-cache-dir -r requirements.txt
+RUN python -m venv /app/venv \
+    && /app/venv/bin/pip install --upgrade pip \
+    && /app/venv/bin/pip install --no-cache-dir -r requirements.txt
 
 # ── Stage 2: Production ───────────────────────────────────────
 FROM python:3.11-slim AS production
@@ -28,7 +28,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy virtualenv from builder
-COPY --from=builder /build/venv /app/venv
+COPY --from=builder /app/venv /app/venv
 
 # Copy application code
 COPY --chown=appuser:appuser . .
