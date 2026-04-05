@@ -1,0 +1,15 @@
+[tool.coverage.run]
+source = ["codereview_env", "app"]
+omit = ["tests/*", "scripts/*", "*/migrations/*"]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+]
+
+[tool.pylint.messages_control]
+disable = ["C0114", "C0115", "C0116"]   # disable missing-docstring warnings

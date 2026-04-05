@@ -193,3 +193,59 @@ def test_arch_task_runs_to_completion():
     ))
     final = env.get_final_result()
     assert final.final_score > 0
+
+@pytest.mark.parametrize("task_id", list(TaskId))
+def test_env_reset_all_tasks(task_id, env):
+    """Reset must work for all three task types."""
+    result = env.reset(task_id, seed=0)
+    assert result.task_id == task_id
+    assert result.observation.noise_budget == 5
+
+@pytest.mark.parametrize("task_id,expected_max_steps", [
+    (TaskId.BUG_DETECTION, 10),
+    (TaskId.SECURITY_AUDIT, 15),
+    (TaskId.ARCHITECTURAL_REVIEW, 20),
+])
+def test_env_max_steps_per_task(task_id, expected_max_steps, env):
+    result = env.reset(task_id, seed=0)
+    assert result.observation.max_steps == expected_max_steps
+
+def test_env_step_raises_when_done(env, approve_action):
+    """Calling step on a done episode must raise ValueError."""
+    env.reset(TaskId.BUG_DETECTION, seed=0)
+    env.step(approve_action)
+    with pytest.raises(ValueError):
+        env.step(approve_action)
+
+def test_env_history_recorded(env):
+    """All steps should appear in final result history."""
+    env.reset(TaskId.BUG_DETECTION, seed=0)
+    from codereview_env.models import Action, ActionType
+    for _ in range(3):
+        env.step(Action(action_type=ActionType.ASK_QUESTION, body="question"))
+    env.step(Action(action_type=ActionType.APPROVE, body="LGTM", verdict=Verdict.LGTM))
+    result = env.get_final_result()
+    assert result.steps_taken == 4
+    assert len(result.history) == 4
+
+def test_env_get_final_result_score_clamped(env, approve_action):
+    """Final score must always be in [0, 1]."""
+    env.reset(TaskId.BUG_DETECTION, seed=0)
+    env.step(approve_action)
+    result = env.get_final_result()
+    # Check that score is a float and within [0, 1]
+    assert isinstance(result.final_score, float)
+    assert 0.0 <= result.final_score <= 1.0
+
+@pytest.mark.parametrize("task_id", list(TaskId))
+@pytest.mark.parametrize("seed", [0, 3, 7])
+def test_env_full_episode_completes(task_id, seed, env):
+    """Full episodes must always reach a terminal state."""
+    env.reset(task_id, seed=seed)
+    from codereview_env.models import Action, ActionType, Verdict
+    # Just skip to terminal
+    action = Action(action_type=ActionType.APPROVE, body="LGTM", verdict=Verdict.LGTM)
+    result = env.step(action)
+    assert result.done is True
+    final = env.get_final_result()
+    assert final.terminated_reason == "terminal_action"
