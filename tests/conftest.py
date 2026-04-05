@@ -1,6 +1,7 @@
 import pytest
 import os
 os.environ["TESTING"] = "true"
+os.environ["APP_ENV"] = "test"
 from fastapi.testclient import TestClient
 from sqlmodel import SQLModel, Session, create_engine
 from sqlmodel.pool import StaticPool

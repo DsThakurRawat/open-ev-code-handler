@@ -79,7 +79,7 @@ from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 # 1. Trusted Host (Prevent Host-header injection)
 app.add_middleware(
     TrustedHostMiddleware, 
-    allowed_hosts=["*"] if settings.app_env == "development" else [f"localhost", "127.0.0.1", "*.github.io"] 
+    allowed_hosts=["*"] if settings.app_env in ("development", "test") else [f"localhost", "127.0.0.1", "*.github.io", "testserver"] 
 )
 
 # 2. Proxy Headers (Support Docker/Reverse-proxy)
