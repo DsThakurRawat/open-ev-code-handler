@@ -16,16 +16,14 @@ FROM python:3.11-slim AS python-builder
 
 WORKDIR /build-python
 
-# Install build dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
+# Environment setup
+WORKDIR /app
+RUN python -m venv /app/venv
+ENV PATH="/app/venv/bin:$PATH"
 
-# Install Python dependencies into /build-python/venv
+# Install dependencies in venv
 COPY requirements.txt .
-RUN python -m venv /build-python/venv \
-    && /build-python/venv/bin/pip install --upgrade pip \
-    && /build-python/venv/bin/pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # ── Stage 3: Production ───────────────────────────────────────
 FROM python:3.11-slim AS production
@@ -45,7 +43,7 @@ ENV PATH="/app/venv/bin:$PATH"
 ENV PYTHONPATH="/app"
 
 # Copy virtualenv from builder
-COPY --from=python-builder /build-python/venv /app/venv
+COPY --from=python-builder /app/venv /app/venv
 
 # Copy dashboard build from frontend-builder
 # (Vite config builds to ../static/dashboard relative to /src/dashboard)
@@ -70,5 +68,5 @@ EXPOSE 7860
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
     CMD curl -f http://localhost:7860/health || exit 1
 
-# Run the application using the venv's uvicorn
-CMD ["/app/venv/bin/uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7860", "--workers", "1"]
+# Run the application using python -m for maximum portability
+CMD ["python", "-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7860", "--workers", "1"]
