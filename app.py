@@ -364,27 +364,23 @@ async def websocket_endpoint(websocket: WebSocket):
     finally:
         clients.discard(websocket)
 
-# ── Dashboard ─────────────────────────────────────────────────────────────────
+# ── Dashboard & Static Files ─────────────────────────────────────────────────
 static_dir = os.path.join(os.path.dirname(__file__), "static", "dashboard")
-if os.path.exists(static_dir):
-    app.mount("/dashboard/assets", StaticFiles(directory=os.path.join(static_dir, "assets")), name="dashboard-assets")
 
-@app.get("/", include_in_schema=False)
-@app.get("/dashboard", include_in_schema=False)
-@app.get("/dashboard/{full_path:path}", include_in_schema=False)
 @app.get("/{full_path:path}", include_in_schema=False)
-def dashboard(full_path: str = ""):
-    """Serve the React dashboard SPA (index.html for all sub-paths)."""
-    # 1. Check if the requested full_path is a specific static file (e.g. logo.svg)
+def serve_dashboard(full_path: str = ""):
+    """Catch-all for Root, Assets, and SPA routing."""
+    # 1. Check if the requested full_path is a specific static file (e.g. logo.svg, assets/index.js)
     if full_path:
-        static_file = os.path.join(os.path.dirname(__file__), "static", "dashboard", full_path)
-        if os.path.exists(static_file) and os.path.isfile(static_file):
-            return FileResponse(static_file)
+        local_file = os.path.join(static_dir, full_path)
+        if os.path.exists(local_file) and os.path.isfile(local_file):
+            return FileResponse(local_file)
 
-    # 2. Fallback to index.html for SPA routing
-    html_path = os.path.join(os.path.dirname(__file__), "static", "dashboard", "index.html")
+    # 2. Fallback to index.html for Root and SPA routes
+    html_path = os.path.join(static_dir, "index.html")
     if not os.path.exists(html_path):
-        raise HTTPException(status_code=404, detail="Dashboard not found. Run: cd dashboard && npm run build")
+        # Fallback if dashboard isn't built
+        return {"status": "ready", "message": "API is online, dashboard not found locally."}
     return FileResponse(html_path)
 
 if __name__ == "__main__":
