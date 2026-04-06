@@ -10,15 +10,9 @@ build/
 *.egg
 MANIFEST
 
-# Dashboard Build (Must be built inside Docker to avoid local skew)
+# Dashboard Build (Keep node_modules out of context, but allow source for builder)
 static/dashboard/
 dashboard/node_modules/
-dashboard/src/
-dashboard/public/
-dashboard/tests/
-dashboard/*.json
-dashboard/*.config.js
-dashboard/*.config.ts
 
 # Virtual Environment
 venv/
