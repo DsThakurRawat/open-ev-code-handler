@@ -193,15 +193,7 @@ async def http_exception_handler(request, exc):
 
 # ── Endpoints ─────────────────────────────────────────────────────────────────
 
-@app.get("/", include_in_schema=False)
-def root():
-    """Absolute root ping handler for infrastructure readiness checks."""
-    return {
-        "status": "ready",
-        "message": "CodeLens API is operational.",
-        "docs": "/docs",
-        "health": "/health"
-    }
+
 
 @app.get("/health")
 def health_check():
@@ -377,8 +369,10 @@ static_dir = os.path.join(os.path.dirname(__file__), "static", "dashboard")
 if os.path.exists(static_dir):
     app.mount("/dashboard/assets", StaticFiles(directory=os.path.join(static_dir, "assets")), name="dashboard-assets")
 
+@app.get("/", include_in_schema=False)
 @app.get("/dashboard", include_in_schema=False)
 @app.get("/dashboard/{full_path:path}", include_in_schema=False)
+@app.get("/{full_path:path}", include_in_schema=False)
 def dashboard(full_path: str = ""):
     """Serve the React dashboard SPA (index.html for all sub-paths)."""
     # 1. Check if the requested full_path is a specific static file (e.g. logo.svg)
