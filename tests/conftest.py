@@ -2,6 +2,7 @@ import pytest
 import os
 os.environ["TESTING"] = "true"
 os.environ["APP_ENV"] = "test"
+os.environ["HF_TOKEN"] = "mock-token"
 from fastapi.testclient import TestClient
 from sqlmodel import SQLModel, Session, create_engine
 from sqlmodel.pool import StaticPool
