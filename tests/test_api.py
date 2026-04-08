@@ -139,3 +139,29 @@ def test_api_leaderboard_pagination(client):
     
     # Test ordering (best first)
     assert data["entries"][0]["score"] >= data["entries"][1]["score"]
+
+def test_api_reset_robustness(client):
+    # 1. No body at all
+    resp = client.post("/reset")
+    assert resp.status_code == 200
+    assert resp.json()["result"]["task_id"] == "bug_detection"
+
+    # 2. Empty JSON body
+    resp = client.post("/reset", json={})
+    assert resp.status_code == 200
+    assert resp.json()["result"]["task_id"] == "bug_detection"
+
+    # 3. Query params only
+    resp = client.post("/reset?task_id=security_audit&seed=100")
+    assert resp.status_code == 200
+    assert resp.json()["result"]["task_id"] == "security_audit"
+    assert resp.json()["result"]["seed"] == 100
+
+    # 4. Query params overriding body
+    resp = client.post(
+        "/reset?task_id=architectural_review", 
+        json={"task_id": "bug_detection", "seed": 50}
+    )
+    assert resp.status_code == 200
+    assert resp.json()["result"]["task_id"] == "architectural_review"
+    assert resp.json()["result"]["seed"] == 50

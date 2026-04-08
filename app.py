@@ -6,7 +6,7 @@ from typing import Dict, List, Optional, AsyncGenerator
 from datetime import datetime, timezone
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, Depends, Security, Query, BackgroundTasks, Request
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, Depends, Security, Query, BackgroundTasks, Request, Body
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi.security.api_key import APIKeyHeader
@@ -148,7 +148,7 @@ async def cleanup_expired_episodes():
 
 # ── Models ────────────────────────────────────────────────────────────────────
 class ResetRequest(BaseModel):
-    task_id: TaskId
+    task_id: Optional[TaskId] = TaskId.BUG_DETECTION
     seed:    int = 42
 
 class ResetResponse(BaseModel):
@@ -216,12 +216,35 @@ def health_check():
 
 @app.post("/reset", response_model=ResetResponse)
 @limiter.limit(f"{settings.rate_limit_per_minute}/minute")
-def reset_env(request: Request, req: ResetRequest, _: None = Depends(verify_api_key)):
+def reset_env(
+    request: Request,
+    req: Optional[ResetRequest] = Body(None),
+    task_id: Optional[TaskId] = Query(None),
+    seed: Optional[int] = Query(None),
+    _: None = Depends(verify_api_key)
+):
+    # Determine task_id: Body (if present) > Query params > Default
+    final_task_id = TaskId.BUG_DETECTION
+    final_seed = 42
+
+    if req:
+        if req.task_id:
+            final_task_id = req.task_id
+        final_seed = req.seed
+    
+    # Query parameters override body if provided explicitly
+    if task_id:
+        final_task_id = task_id
+    if seed is not None:
+        final_seed = seed
+
     episode_id = str(uuid.uuid4())
     env        = CodeLensEnv()
-    result     = env.reset(req.task_id, req.seed)
+    result     = env.reset(final_task_id, final_seed)
     episodes[episode_id] = env
     episode_timestamps[episode_id] = datetime.now(timezone.utc)
+    
+    logger.info(f"Reset environment: task={final_task_id.value}, seed={final_seed}, id={episode_id}")
     return ResetResponse(episode_id=episode_id, result=result)
 
 @app.post("/step/{episode_id}", response_model=StepResult)
