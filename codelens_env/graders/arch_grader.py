@@ -46,16 +46,31 @@ def grade_architectural_review(scenario: Scenario, history: List[ActionRecord]) 
             
     verdict_avg = sum(verdict_scores) / len(verdict_scores) if verdict_scores else 0.0
     
-    # 3. Quality Score
+    # 3. Quality Score (Semantic + Length)
     max_body_len = 0
+    full_text = ""
     for action in flag_actions:
-        max_body_len = max(max_body_len, len(action.body or ""))
+        body = action.body or ""
+        max_body_len = max(max_body_len, len(body))
+        full_text += " " + body.lower()
         
-    quality_score = 0.0
+    # Reward professional architectural terminology (Phase 3 Human Review polish)
+    arch_keywords = [
+        "responsibility", "coupling", "cohesion", "dependency", "abstraction",
+        "interface", "pattern", "n+1", "god", "scalability", "latency",
+        "concurrency", "layer", "separation", "solid", "dry"
+    ]
+    match_count = sum(1 for kw in arch_keywords if kw in full_text)
+    semantic_score = min(1.0, match_count / 3) # Reward up to 3 high-quality terms
+    
+    length_score = 0.0
     if max_body_len > 20:
-        quality_score = min(1.0, max_body_len / 200)
+        length_score = min(1.0, max_body_len / 200)
+    
+    quality_score = 0.7 * semantic_score + 0.3 * length_score
         
     # 4. Final Weighted Calculation
+    # issue_detection (60%), verdict (20%), quality (20%)
     final_score = 0.6 * issue_score_avg + 0.2 * verdict_avg + 0.2 * quality_score
     return float(max(0.0, min(1.0, final_score)))
 

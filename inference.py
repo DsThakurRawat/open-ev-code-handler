@@ -126,8 +126,44 @@ Code diff:
 Output a single JSON action object. If you've already flagged the main issues, submit approve or request_changes."""
 
 
+def extract_json(text: str) -> dict:
+    """Robustly extract the first JSON object from a string."""
+    text = text.strip()
+    
+    # 1. Try direct parse
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+
+    # 2. Try markdown extraction
+    if "```json" in text:
+        try:
+            content = text.split("```json")[1].split("```")[0].strip()
+            return json.loads(content)
+        except (IndexError, json.JSONDecodeError):
+            pass
+    elif "```" in text:
+        try:
+            content = text.split("```")[1].split("```")[0].strip()
+            return json.loads(content)
+        except (IndexError, json.JSONDecodeError):
+            pass
+
+    # 3. Last resort: find first { and last }
+    start = text.find('{')
+    end = text.rfind('}')
+    if start != -1 and end != -1:
+        try:
+            return json.loads(text[start:end+1])
+        except json.JSONDecodeError:
+            pass
+
+    raise ValueError("Could not extract valid JSON from LLM response")
+
+
 def call_llm(messages: list) -> dict:
-    """Call the LLM with retries and parse its JSON response."""
+    """Call the LLM with retries and robustly parse its JSON response."""
     last_err = None
     for attempt in range(3):
         try:
@@ -135,18 +171,11 @@ def call_llm(messages: list) -> dict:
                 model=MODEL_NAME,
                 messages=messages,
                 temperature=0.1,
-                max_tokens=600,
+                max_tokens=800,
                 response_format={"type": "json_object"},
             )
-            content = response.choices[0].message.content.strip()
-            
-            # Robust JSON extract (some models might still use markdown)
-            if "```json" in content:
-                content = content.split("```json")[1].split("```")[0].strip()
-            elif "```" in content:
-                 content = content.split("```")[1].split("```")[0].strip()
-
-            return json.loads(content)
+            content = response.choices[0].message.content
+            return extract_json(content)
         except Exception as e:
             last_err = e
             if attempt < 2:
